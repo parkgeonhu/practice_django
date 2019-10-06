@@ -1,6 +1,10 @@
+{% load socialaccount %}
+ <a href=" {% provider_login_url 'kakao' %}">카카오 로그인</a>
+
 <div>
     <h1><a href="/">Django Girls Blog</a></h1>
 </div>
+
 
 {% if user.is_authenticated %}
     <a href="{% url 'post_new' %}" class="top-menu">글 쓰기</a>
