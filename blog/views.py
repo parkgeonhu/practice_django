@@ -63,6 +63,8 @@ def comment_approve(request, pk):
     comment.approve()
     return redirect('post_detail', pk=comment.post.pk)
 
+def payment(request):
+    return render(request, 'blog/payment.html')
 
 def comment_remove(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
