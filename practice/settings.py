@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',  
     'allauth.socialaccount.providers.kakao',
+    'rest_framework',
+    'takeit_web',
 ]
 
 AUTHENTICATION_BACKENDS = (
@@ -135,7 +137,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
-LOGIN_REDIRECT_URL = "/"
+LOGIN_REDIRECT_URL = "/blog/signup"
 ACCOUNT_AUTHENTICATED_LOGOUT_REDIRECTS = True
 ACCOUNT_LOGOUT_REDIRECT_URL = "/"
 

@@ -2,6 +2,25 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
+from allauth.socialaccount.models import SocialAccount
+
+
+# class Person(models.Model):
+    
+#     driver = models.ForeignKey(User, models.CASCADE, related_name='persons')
+    
+#     def __str__(self):
+#         return self.username
+
+class Profile(models.Model):
+    user=models.ForeignKey(SocialAccount, on_delete=models.CASCADE)
+    phone_number=models.TextField()
+    
+    def __str__(self):
+        return f'{self.user.user.username}@{self.phone_number}'
+    
+
+
 
 class Post(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

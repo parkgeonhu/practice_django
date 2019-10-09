@@ -1,6 +1,7 @@
 {% load socialaccount %}
- <a href=" {% provider_login_url 'kakao' %}">카카오 로그인</a>
+ <a href=" {% provider_login_url 'kakao' %}">카카오로 회원가입</a>
 
+{{ request.user.username }}
 <div>
     <h1><a href="/">Django Girls Blog</a></h1>
 </div>

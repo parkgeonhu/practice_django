@@ -1,6 +1,45 @@
+
+    <button onclick="calculate()">calculate</button>
+ 
+    <script type="text/javascript">
+        window.onload = function () {
+            if (window.Notification) {
+                Notification.requestPermission();
+            }
+        }
+ 
+        function calculate() {
+            setTimeout(function () {
+                notify();
+            }, 5000);
+        }
+ 
+        function notify() {
+            if (Notification.permission !== 'granted') {
+                alert('notification is disabled');
+            }
+            else {
+                var notification = new Notification('Notification title', {
+                    icon: 'http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png',
+                    body: 'Notification text',
+                });
+ 
+                notification.onclick = function () {
+                    window.open('http://google.com');
+                };
+            }
+        }
+    </script>
+
+
+출처: https://untitledtblog.tistory.com/107 [Untitled]
+
+
 {% if user.is_authenticated %}
      <a class="btn btn-default" href="{% url 'post_edit' pk=post.pk %}">수정하기</a>
 {% endif %}
+
+
 
 <div class="post">
         {% if post.published_date %}

@@ -21,4 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('blog/', include('blog.urls')),
     url(r'^accounts/', include('allauth.urls')),
+    path('takeit/', include('takeit_web.urls'))
 ]

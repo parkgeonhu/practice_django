@@ -1,9 +1,25 @@
 from django.shortcuts import render, redirect
-from .models import Post, Comment
-from .forms import PostForm, CommentForm
+from .models import Post, Comment, Profile
+from .forms import PostForm, CommentForm, ProfileForm
 from django.utils import timezone
 from django.shortcuts import render, get_object_or_404
 
+from allauth.socialaccount.models import SocialAccount
+
+
+def signup(request):
+    if request.method == "POST":
+        form = ProfileForm(request.POST)
+        if form.is_valid():
+            profile=form.save(commit=False)
+            soc_acc = SocialAccount.objects.get(user=request.user)
+            profile.user = soc_acc
+            profile.save()
+            return render(request, 'blog/post_list.html')
+    else:
+        form = ProfileForm()
+    return render(request, 'blog/signup.html', {'form': form})
+    
 
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
