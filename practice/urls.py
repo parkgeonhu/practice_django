@@ -16,10 +16,18 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from django.conf.urls import url
+from rest_framework.routers import DefaultRouter
+from takeit_web import views
+
+
+router = DefaultRouter()
+router.register(r'orders', views.OrderViewSet)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('blog/', include('blog.urls')),
+    path('api/', include(router.urls)),
     url(r'^accounts/', include('allauth.urls')),
     path('takeit/', include('takeit_web.urls'))
 ]

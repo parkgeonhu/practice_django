@@ -34,20 +34,6 @@ class Store(models.Model):
     def __str__(self):
         return self.name
 
-    def prepare_closing(self) -> bool:
-        """
-        결제 대기 중인 주문 및 진행중인 주문을 확인하고 종료합니다.
-        만약 진행중인 주문이 존재한다면 False를 반환합니다.
-        """
-        orders_in_progress = Order.objects.filter(store=self, status__in=[
-            OrderStatus.IN_PROGRESS, OrderStatus.MANUFACTURED
-        ])
-        if orders_in_progress.exists():
-            return False
-
-        close_waiting_orders.send(self)
-        return True
-
 
 
 
@@ -78,13 +64,33 @@ class OrderItem(models.Model):
 # def now_korea() -> datetime.datetime:
 #     return datetime.datetime.now(timezone('Asia/Seoul'))
 
+class OrderStatus:
+    FAILURE_PAYMENT = 'FAILURE_PAYMENT'
+    WAITING_PAYMENT = 'WAITING_PAYMENT'
+    NEW = 'NEW'
+    REJECTED = 'REJECTED'
+    IN_PROGRESS = 'IN_PROGRESS'
+    MANUFACTURED = 'MANUFACTURED'
+    DELIVERED = 'DELIVERED'
+
+    
+ORDER_STATUS = (
+    (OrderStatus.FAILURE_PAYMENT, '결제 실패'),
+    (OrderStatus.WAITING_PAYMENT, '결제 대기중'),
+    (OrderStatus.NEW, '새 주문'),
+    (OrderStatus.REJECTED, '주문 거절'),
+    (OrderStatus.IN_PROGRESS, '제조 중'),
+    (OrderStatus.MANUFACTURED, '제조 완료'),
+    (OrderStatus.DELIVERED, '전달 완료'),
+)
+
 
     
 class Order(models.Model):
     orderer = models.ForeignKey(User, on_delete=models.PROTECT, related_name='orders')
     store = models.ForeignKey(Store, on_delete=models.PROTECT, related_name='orders')
-    # status = models.CharField(max_length=32, choices=ORDER_STATUS,
-    #                           default=OrderStatus.WAITING_PAYMENT, help_text='진행 상황')
+    status = models.CharField(max_length=32, choices=ORDER_STATUS,
+                              default=OrderStatus.WAITING_PAYMENT, help_text='진행 상황')
     order_number = models.CharField(max_length=16, help_text='A-01 ~ Z-999')
     # Range of PositiveSmallIntegerField: 0 ~ 32767
     grand_total = models.IntegerField(help_text='총 합계(결제 금액)')
