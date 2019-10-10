@@ -6,7 +6,6 @@ from django.contrib.auth.models import User
 
 class Person(models.Model):
     
-
     def __str__(self):
         return self.phone
 
