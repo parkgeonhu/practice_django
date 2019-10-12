@@ -28,6 +28,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('blog/', include('blog.urls')),
     path('api/', include(router.urls)),
+    path('test/', include('takeit_web.urls')),
     url(r'^accounts/', include('allauth.urls')),
-    path('takeit/', include('takeit_web.urls'))
+    path('takeit/', include('takeit_web.urls')),
 ]

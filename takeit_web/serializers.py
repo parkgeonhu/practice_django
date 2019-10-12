@@ -1,4 +1,4 @@
-from .models import Order
+from .models import Order, OrderItem, Store
 from rest_framework import serializers
 
 # from django.contrib.auth.models import User
@@ -32,16 +32,34 @@ from rest_framework import serializers
 #             )    
 
 
-class StoreSerializer(serializers.Serializer):
-    name = serializers.CharField(max_length=100)
+# class StoreSerializer(serializers.Serializer):
+#     uuid = serializers.CharField(max_length=100)
     
-class UserSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=100)
+# class UserSerializer(serializers.Serializer):
+#     username = serializers.CharField(max_length=100)
 
-class OrderSerializer(serializers.HyperlinkedModelSerializer):
+# class ProductSerializer(serializers.Serializer):
+#     name = serializers.CharField(max_length=100)
+    
+
+class OrderItemSerializer(serializers.ModelSerializer):
+    # def to_representation(self, value):
+    #     value.product=ProductSerializer()
+    #     return 'Product : %s, options : %s' % (value.product, value.options)
+    product=serializers.SlugRelatedField(slug_field='name', read_only=True)
+    
+    class Meta:
+        model = OrderItem
+        fields = ['product','options']
+    
+
+
+class OrderSerializer(serializers.ModelSerializer):
     # orderitems = OrderItemsField(queryset=User.objects.all(), many=True)
-    orderer=UserSerializer()
-    store=StoreSerializer()
+    orderer = serializers.SlugRelatedField(slug_field='uuid', read_only=True)
+    store= serializers.SlugRelatedField(slug_field='uuid', read_only=True)
+    order_items = OrderItemSerializer(many=True)
+
     
     class Meta:
         model = Order

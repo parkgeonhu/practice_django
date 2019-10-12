@@ -17,7 +17,7 @@ class Profile(models.Model):
     phone_number=models.TextField()
     
     def __str__(self):
-        return f'{self.user.user.username}@{self.phone_number}'
+        return f'{self.user}@{self.phone_number}'
     
 
 

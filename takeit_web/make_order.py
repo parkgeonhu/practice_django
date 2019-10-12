@@ -1,10 +1,11 @@
-    
 def _order_name(item_names: list):
     if len(item_names) > 1:
         return f'{item_names[0]} 외 {len(item_names) - 1}건'
     else:
         return item_names[0]
 
+    
+    
 def make_order():
     #_order_name으로 Order 객체 만들어주고
     

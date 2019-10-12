@@ -5,6 +5,7 @@ from rest_framework import viewsets
 
 
 #viewset은 사용자가 접근하려는 페이지에 필요한 json 통신을 위한 것
+#프론트 페이지에 어떻게 데이터를 잘 구성해서 전달해줄지가 중요한 부분
 
 class OrderViewSet(viewsets.ModelViewSet):
     """
