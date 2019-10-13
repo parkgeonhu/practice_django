@@ -32,4 +32,5 @@ urlpatterns = [
     path('test/', include('takeit_web.urls')),
     url(r'^accounts/', include('allauth.urls')),
     path('takeit/', include('takeit_web.urls')),
+	path('api/', include('sample.urls')),
 ]
