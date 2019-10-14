@@ -1,5 +1,6 @@
 import uuid
 import datetime
+from pytz import timezone
 
 from django.contrib.auth.models import (
     AbstractBaseUser, BaseUserManager, PermissionsMixin,
@@ -27,25 +28,25 @@ class ModelMixin(models.Model):
 
 
 class UserManager(BaseUserManager):
-    def _create_user(self, phone, nickname, birthday=None, password=None,
+    def _create_user(self, phone, nickname, password=None,
                      is_staff=False, is_superuser=False, **extra_fields):
         now = now_korea()
         if not phone:
             raise ValueError('The given phone must be set')
         is_active = extra_fields.pop("is_active", True)
         phone = clean_phone(phone)
-        user = self.model(phone=phone, birthday=birthday, nickname=nickname, is_staff=is_staff, is_active=is_active,
+        user = self.model(phone=phone, nickname=nickname, is_staff=is_staff, is_active=is_active,
                           is_superuser=is_superuser, last_login=now,
                           created_at=now, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_user(self, phone, nickname, birthday=None, password=None, **extra_fields):
-        return self._create_user(phone, nickname, birthday, password, **extra_fields)
+    def create_user(self, phone, nickname, password=None, **extra_fields):
+        return self._create_user(phone, nickname, password, **extra_fields)
 
-    def create_superuser(self, phone, password, birthday=None, **extra_fields):
-        return self._create_user(phone, f'admin-{phone}', birthday, password, True, True, **extra_fields)
+    def create_superuser(self, phone, password, **extra_fields):
+        return self._create_user(phone, f'admin-{phone}', password, True, True, **extra_fields)
 
 
 class AbstractUser(AbstractBaseUser, PermissionsMixin):
