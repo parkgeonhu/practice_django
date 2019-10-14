@@ -1,6 +1,6 @@
-from rest_framework.authentication import TokenAuthentication, BasicAuthentication
+from rest_framework.authentication import TokenAuthentication, BasicAuthentication, SessionAuthentication
 from rest_framework.response import Response
-from .models import Order, Store, Product, Account
+from .models import Order, Store, Product
 from .serializers import OrderSerializer
 from rest_framework import viewsets
 from rest_framework import generics
@@ -17,16 +17,14 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     Additionally we also provide an extra `highlight` action.
     """
-    permission_classes = (IsAuthenticated,) 
-    authentication_classes = [TokenAuthentication]
+    permission_classes = (IsAuthenticated,)
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
 
-class OrderList(generics.ListAPIView):
-	serializer_class = OrderSerializer
-	permission_classes = (IsAuthenticated,)  
-	authentication_classes = [TokenAuthentication]
+# class OrderList(generics.ListAPIView):
+# 	serializer_class = OrderSerializer
+# 	permission_classes = (IsAuthenticated,)  
 	
-	def get_queryset(self):
-		username = self.kwargs['username']
-		return Order.objects.filter(orderer=Account.objects.get(uuid=username))
+# 	def get_queryset(self):
+# 		username = self.kwargs['username']
+# 		return Order.objects.filter(orderer=Account.objects.get(uuid=username))

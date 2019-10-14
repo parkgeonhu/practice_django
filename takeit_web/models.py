@@ -1,28 +1,40 @@
 from django.db import models
 import uuid
 from django.utils import timezone
+from services.models import AbstractUser, ModelMixin
 
 
-from allauth.socialaccount.models import SocialAccount
-# import datetime
-# from pytz import timezone
+class OrderStatus:
+    FAILURE_PAYMENT = 'FAILURE_PAYMENT'
+    WAITING_PAYMENT = 'WAITING_PAYMENT'
+    NEW = 'NEW'
+    REJECTED = 'REJECTED'
+    IN_PROGRESS = 'IN_PROGRESS'
+    MANUFACTURED = 'MANUFACTURED'
+    DELIVERED = 'DELIVERED'
 
-
-class ModelMixin(models.Model):
-    created_at = models.DateTimeField(default=timezone.now)
-    updated_at = models.DateTimeField(default=timezone.now)
-    uuid = models.UUIDField(default=uuid.uuid4, unique=True, db_index=True)
-
-    class Meta:
-        abstract = True
-
-
-class Account(ModelMixin):
-    soc_account=models.OneToOneField(SocialAccount, on_delete=models.CASCADE)
-    phone_number=models.TextField()
     
+ORDER_STATUS = (
+    (OrderStatus.FAILURE_PAYMENT, '결제 실패'),
+    (OrderStatus.WAITING_PAYMENT, '결제 대기중'),
+    (OrderStatus.NEW, '새 주문'),
+    (OrderStatus.REJECTED, '주문 거절'),
+    (OrderStatus.IN_PROGRESS, '제조 중'),
+    (OrderStatus.MANUFACTURED, '제조 완료'),
+    (OrderStatus.DELIVERED, '전달 완료'),
+)
+
+
+
+class User(AbstractUser, ModelMixin):
+
+    # device_token = models.CharField(max_length=255, blank=True, null=False)
+    nickname = models.CharField(max_length=16, unique=True)
+    # phone_auth = models.OneToOneField(PhoneAuth, models.SET_NULL, null=True, blank=True, default=None,
+    #                                   help_text="유저가 회원가입 시 사용한 PhoneAuth 객체. 없으면 인증받지 않았음을 의미")
+
     def __str__(self):
-        return f'{self.soc_account}@{self.phone_number}'
+        return self.phone
 
     @property
     def is_store_owner(self):
@@ -30,7 +42,11 @@ class Account(ModelMixin):
             return self.store is not None
         except Store.DoesNotExist:
             return False
+		
 
+		
+		
+		
 
 class Store(ModelMixin):
 
@@ -38,7 +54,7 @@ class Store(ModelMixin):
     street_address = models.CharField(max_length=128, help_text='도로명 주소(신 주소)')
     place = models.CharField(max_length=64, help_text='숭실대학교 학생회관 4층')
     # location = gis_models.PointField(geography=True, help_text='Use POINT(lng lat) format')
-    owner = models.OneToOneField(Account, models.CASCADE, related_name='store')
+    owner = models.OneToOneField(User, models.CASCADE, related_name='store')
     owner_phone = models.CharField(max_length=20, help_text='점주 전화번호')
     note = models.TextField(help_text='비고 등 기타 메모', blank=True)
     is_opened = models.BooleanField(default=False)
@@ -75,33 +91,8 @@ class OrderItem(ModelMixin):
         return f'{self.product.name}@{self.order.store.name}'
 
     
-# def now_korea() -> datetime.datetime:
-#     return datetime.datetime.now(timezone('Asia/Seoul'))
-
-class OrderStatus:
-    FAILURE_PAYMENT = 'FAILURE_PAYMENT'
-    WAITING_PAYMENT = 'WAITING_PAYMENT'
-    NEW = 'NEW'
-    REJECTED = 'REJECTED'
-    IN_PROGRESS = 'IN_PROGRESS'
-    MANUFACTURED = 'MANUFACTURED'
-    DELIVERED = 'DELIVERED'
-
-    
-ORDER_STATUS = (
-    (OrderStatus.FAILURE_PAYMENT, '결제 실패'),
-    (OrderStatus.WAITING_PAYMENT, '결제 대기중'),
-    (OrderStatus.NEW, '새 주문'),
-    (OrderStatus.REJECTED, '주문 거절'),
-    (OrderStatus.IN_PROGRESS, '제조 중'),
-    (OrderStatus.MANUFACTURED, '제조 완료'),
-    (OrderStatus.DELIVERED, '전달 완료'),
-)
-
-
-    
 class Order(ModelMixin):
-    orderer = models.ForeignKey(Account, on_delete=models.PROTECT, related_name='orders')
+    orderer = models.ForeignKey(User, on_delete=models.PROTECT, related_name='orders')
     store = models.ForeignKey(Store, on_delete=models.PROTECT, related_name='orders')
     status = models.CharField(max_length=32, choices=ORDER_STATUS,
                               default=OrderStatus.WAITING_PAYMENT, help_text='진행 상황')
@@ -114,6 +105,10 @@ class Order(ModelMixin):
 
     def __str__(self):
         return f'{self.orderer}, {self.name}'
+	
+	
+
+
 
 
 

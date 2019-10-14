@@ -54,7 +54,7 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 
     # `allauth` specific authentication methods, such as login by e-mail
-    'allauth.account.auth_backends.AuthenticationBackend',
+    # 'allauth.account.auth_backends.AuthenticationBackend',
 )
 
 MIDDLEWARE = [
@@ -101,7 +101,7 @@ DATABASES = {
     }
 }
 
-
+AUTH_USER_MODEL = "takeit_web.User" 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
@@ -160,7 +160,9 @@ REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
 	'DEFAULT_AUTHENTICATION_CLASSES': [
+		'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
+		'rest_framework.authentication.BasicAuthentication',
 	]
 	# 'DEFAULT_PERMISSION_CLASSES': [
 	# 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
